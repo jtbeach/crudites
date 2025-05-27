@@ -2,6 +2,7 @@
 
 import logging
 
+import click
 import pytest
 from click.testing import CliRunner
 from pydantic_settings import BaseSettings
@@ -112,14 +113,17 @@ def test_crudites_command_click_integration():
     runner = CliRunner()
 
     @crudites_command(DummyGlobals, DummyConfig)
-    async def cli_cmd(globals_obj):
+    @click.option("--arg", type=str, default="default")
+    async def cli_cmd(globals_obj, arg):
         setup_logging(globals_obj.config.logging)
         logger.info(f"Command executed with resource: {globals_obj.resource}")
+        logger.info(f"Command executed with arg: {arg}")
 
-    result = runner.invoke(cli_cmd, [])
+    result = runner.invoke(cli_cmd, ["--arg", "test"])
     assert result.exit_code == 0
     assert "Resource initialized" in result.output
     assert "Command executed with resource: initialized" in result.output
+    assert "Command executed with arg: test" in result.output
     assert "Resource cleaned up" in result.output
     assert "Error during AppGlobals resource cleanup" in result.output
     assert "Error thrown in resource2 cleanup" in result.output
