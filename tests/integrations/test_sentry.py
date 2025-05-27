@@ -2,7 +2,7 @@
 
 from unittest.mock import patch, MagicMock, Mock
 
-from crudites.integrations.sentry import SentryConfig, init_sentry
+from crudites.integrations.sentry import SentryConfig, setup_sentry
 
 
 def test_sentry_config_defaults() -> None:
@@ -30,7 +30,7 @@ def test_sentry_config_custom_values() -> None:
 def test_init_sentry_when_disabled(mock_logger: Mock, mock_sentry_init: Mock) -> None:
     """Test init_sentry when Sentry is disabled."""
     config = SentryConfig(enabled=False)
-    init_sentry(config)
+    setup_sentry(config)
 
     mock_logger.info.assert_called_once_with(
         "Skipping Sentry init since Sentry not enabled"
@@ -45,7 +45,7 @@ def test_init_sentry_when_missing_dsn(
 ) -> None:
     """Test init_sentry when DSN is missing."""
     config = SentryConfig(enabled=True, dsn=None)
-    init_sentry(config)
+    setup_sentry(config)
 
     mock_logger.warning.assert_called_once_with(
         "Skipping Sentry init since %s is missing", "dsn"
@@ -62,7 +62,7 @@ def test_init_sentry_success(mock_logger: Mock, mock_sentry_init: Mock) -> None:
     )
     integrations = [MagicMock()]
 
-    init_sentry(config, integrations)
+    setup_sentry(config, integrations)
 
     mock_logger.info.assert_called_once_with(
         "Initializing Sentry with environment: %s", "test"

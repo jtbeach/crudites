@@ -44,10 +44,7 @@ class AppGlobals(ABC, Generic[ConfigType]):
     ```
     class MyAppGlobals(AppGlobals[MyConfig]):
 
-        def __init__(self, config: MyConfig) -> None:
-            super().__init__(config)
-            # Declare the resource types here for typing
-            self.db_engine: AsyncEngine
+        db_engine: AsyncEngine
 
         @property
         def resources(self) -> Sequence[tuple[str, AsyncGenerator[Any, None]]]:

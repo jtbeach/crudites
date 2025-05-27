@@ -139,9 +139,8 @@ class Config(BaseSettings):
 
 
 class MyAppGlobals(AppGlobals[Config]):
-    def __init__(self, config: Config) -> None:
-        super().__init__(config)
-        self.db_engine: AsyncEngine
+
+    db_engine: AsyncEngine
 
     @property
     def resources(self) -> Sequence[tuple[str, AsyncGenerator[Any, None]]]:
@@ -241,6 +240,24 @@ Key features of the resource management system:
 
 ## Development
 
+### Prerequisites
+
+This project uses [uv](https://github.com/astral-sh/uv) for dependency management and virtual environment handling. It's a fast Python package installer and resolver written in Rust.
+
+### Installing uv
+
+#### macOS / Linux
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+#### Windows
+```powershell
+powershell -c "(Invoke-WebRequest -Uri 'https://astral.sh/uv/install.ps1' -UseBasicParsing).Content | pwsh -Command -"
+```
+
+For more detailed installation instructions, visit the [uv documentation](https://github.com/astral-sh/uv#installation).
+
 ### Running all checks and test
 
 ```bash
@@ -250,31 +267,31 @@ poe all
 ### Formatting code (ruff)
 
 ```bash
-poe format
+uv run poe format
 ```
 
 ### Linting code (mypy, ruff, bandit)
 
 ```bash
-poe lint
+uv run poe lint
 ```
 
 To fix any auto-fixable errors
 
 ```bash
-poe fix
+uv run poe fix
 ```
 
 ### Running tests
 
 ```bash
-poe test
+uv run poe test
 ```
 
 To debug / target a single failing test and break in the debugger on exception
 
 ```bash
-poe debug_test tests/test_globals.py::test_app_globals_abstract_method
+uv run poe debug_test tests/test_globals.py::test_app_globals_abstract_method
 ```
 
 ## License

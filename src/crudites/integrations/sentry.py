@@ -17,7 +17,7 @@ class SentryConfig(BaseModel):
     enabled: bool = False
 
 
-def init_sentry(config: SentryConfig, integrations: list | None = None) -> None:
+def setup_sentry(config: SentryConfig, integrations: list | None = None) -> None:
     """Init for Sentry."""
     if not config.enabled:
         logger.info("Skipping Sentry init since Sentry not enabled")
