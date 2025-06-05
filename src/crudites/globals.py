@@ -8,17 +8,14 @@ import logging
 from abc import ABC, abstractmethod
 from collections.abc import AsyncGenerator, Sequence
 from types import TracebackType
-from typing import Any, Generic, Self, TypeVar
+from typing import Any, Self
 
 from pydantic_settings import BaseSettings
 
 logger = logging.getLogger(__name__)
 
 
-ConfigType = TypeVar("ConfigType", bound=BaseSettings)
-
-
-class AppGlobals(ABC, Generic[ConfigType]):
+class AppGlobals[ConfigT: BaseSettings](ABC):
     """Application global variables.
 
     This class is used to store global variables for the application. This is is done
@@ -85,7 +82,7 @@ class AppGlobals(ABC, Generic[ConfigType]):
     ```
     """
 
-    def __init__(self, config: ConfigType) -> None:
+    def __init__(self, config: ConfigT) -> None:
         """Constructor."""
         self.config = config
         # Private variable used to track generators that need to be cleaned up

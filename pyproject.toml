@@ -1,19 +1,18 @@
 [project]
 name = "crudites"
-version = "0.0.3"
+version = "0.0.4"
 description = "A modern Python package for building robust web applications with FastAPI and SQLAlchemy. It focuses on providing the missing glue required to build standard CRUD applications with an opinionated view on best practices."
 readme = "README.md"
 authors = [
     { name = "Joel Beach", email = "12853460+jtbeach@users.noreply.github.com" }
 ]
 license = { text = "MIT" }
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Software Development :: Libraries :: Application Frameworks",
@@ -26,6 +25,7 @@ dependencies = [
     "json-log-formatter>=1.1.1",
     "pydantic>=2.11.5",
     "pydantic-settings>=2.9.1",
+    "pyjwt[crypto]>=2.10.1",
     "sentry-sdk[fastapi,httpx]>=2.29.1",
     "sqlalchemy[asyncio,postgresql-psycopg]>=2.0.41",
 ]
@@ -65,7 +65,7 @@ disable_warnings = ["no-data-collected", "module-not-measured", "couldnt-parse"]
 
 [tool.mypy]
 plugins = ["pydantic.mypy"]
-python_version = "3.11"
+python_version = "3.12"
 warn_redundant_casts = true
 warn_unused_ignores = true
 check_untyped_defs = true

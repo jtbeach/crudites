@@ -1,11 +1,12 @@
 """Reusable SQLAlchemy mixins."""
 
 from __future__ import annotations
+
 from datetime import datetime
 from enum import Enum
 from uuid import UUID
 
-from sqlalchemy import text, func
+from sqlalchemy import func, text
 from sqlalchemy.orm import Mapped, MappedAsDataclass, mapped_column
 
 

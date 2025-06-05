@@ -1,6 +1,6 @@
 """Tests for Sentry integration."""
 
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import MagicMock, Mock, patch
 
 from crudites.integrations.sentry import SentryConfig, setup_sentry
 

@@ -19,6 +19,7 @@ class LoggingConfig(BaseModel):
 
 def setup_logging(config: LoggingConfig) -> None:
     """Basic function to init logging."""
+
     if config.format_str is None:
         config.format_str = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
