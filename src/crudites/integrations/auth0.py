@@ -1,6 +1,6 @@
 """Auth0 integration."""
 
-from collections.abc import Callable, Sequence
+from collections.abc import Sequence
 
 import jwt
 from fastapi import HTTPException, status
@@ -64,12 +64,12 @@ class Auth0TokenVerifier[TokenT: Auth0Token, ConfigT: Auth0Config]:
         self,
         config: ConfigT,
         token_model_cls: type[TokenT],
-        authorizer: Callable[[ConfigT, SecurityScopes, TokenT], bool],
+        allowed_audiences: list[str],
     ) -> None:
         """Constructor."""
         self.config = config
         self.token_model_cls = token_model_cls
-        self.authorizer = authorizer
+        self.allowed_audiences: list[str] = allowed_audiences
 
         # This gets the JWKS from a given URL and does processing so you can
         # use any of the keys available
@@ -79,19 +79,22 @@ class Auth0TokenVerifier[TokenT: Auth0Token, ConfigT: Auth0Config]:
     async def verify(
         self,
         security_scopes: SecurityScopes,
-        token: HTTPAuthorizationCredentials | None,
+        http_authorization_credentials: HTTPAuthorizationCredentials | None,
     ) -> TokenT:
-        """Verify an Auth0-issued JWT token and return the payload.
+        """Verify an Auth0-issued JWT token send as a bearer token and return the payload.
 
-        Signature mathces what is expected by the FastAPI Security scheme.
+        Signature matches what is expected by the FastAPI Security scheme.
         """
 
-        if token is None:
+        if http_authorization_credentials is None:
             raise UnauthenticatedException
+
+        bearer_token = http_authorization_credentials.credentials
 
         try:
             signing_key = await run_in_threadpool(
-                self.jwks_client.get_signing_key_from_jwt, token.credentials
+                self.jwks_client.get_signing_key_from_jwt,
+                bearer_token,
             )
         except jwt.exceptions.PyJWKClientError as error:
             raise UnauthorizedException(str(error)) from error
@@ -100,25 +103,22 @@ class Auth0TokenVerifier[TokenT: Auth0Token, ConfigT: Auth0Config]:
 
         try:
             payload = jwt.decode(
-                token.credentials,
+                bearer_token,
                 signing_key.key,
                 algorithms=self.config.algorithms,
                 issuer=f"https://{self.config.domain}/",
                 leeway=self.config.leeway,
+                audience=self.allowed_audiences,
                 options={
                     "require": ["iss", "sub", "aud", "iat", "exp"],
                     "verify_signature": True,
                     "verify_iss": True,
                     "verify_exp": True,
                     "verify_iat": True,
-                    "verify_aud": False,  # Validation of the audience should be handled by the authorizer
+                    "verify_aud": True,
                 },
             )
 
-            token_model = self.token_model_cls(**payload)
-            if not self.authorizer(self.config, security_scopes, token_model):
-                raise UnauthorizedException("Authorizer has rejected the token.")
-
-            return token_model
+            return self.token_model_cls(**payload)
         except Exception as error:
             raise UnauthorizedException(str(error)) from error

@@ -1,6 +1,6 @@
 [project]
 name = "crudites"
-version = "0.0.4"
+version = "0.0.5"
 description = "A modern Python package for building robust web applications with FastAPI and SQLAlchemy. It focuses on providing the missing glue required to build standard CRUD applications with an opinionated view on best practices."
 readme = "README.md"
 authors = [
